@@ -3,9 +3,10 @@
 import { CreditCard, IdCard, LoaderCircle, Lock, Store, Truck } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { OrderSummaryRows } from "@/components/cart/order-summary";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { MobileActionBar } from "@/components/ui/mobile-action-bar";
 import { siteConfig } from "@/config/site";
 import { cartSubtotal, useCart } from "@/lib/cart-store";
 import { calculateTotals } from "@/lib/commerce/pricing";
@@ -21,6 +22,7 @@ export function CheckoutForm() {
   const [fulfillment, setFulfillment] = useState<FulfillmentMethod>("pickup");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
 
   const subtotal = cartSubtotal(lines);
   const totals = calculateTotals(subtotal, fulfillment);
@@ -127,7 +129,7 @@ export function CheckoutForm() {
               <Field label="Street address" name="street" autoComplete="address-line1" required className="sm:col-span-4" />
               <Field label="Unit (optional)" name="unit" autoComplete="address-line2" className="sm:col-span-2" />
               <Field label="City" name="city" autoComplete="address-level2" defaultValue="Windsor" required className="sm:col-span-3" />
-              <Field label="Postal code" name="postalCode" autoComplete="postal-code" required className="sm:col-span-3" />
+              <Field label="Postal code" name="postalCode" autoComplete="postal-code" autoCapitalize="characters" required className="sm:col-span-3" />
             </div>
           )}
           <label className="mt-6 grid gap-2">
@@ -135,7 +137,7 @@ export function CheckoutForm() {
             <textarea
               name="notes"
               rows={3}
-              className="w-full resize-none border hairline bg-ink-950/50 px-4 py-3 text-sm text-cream focus:border-gold-300 focus:outline-none"
+              className="w-full resize-none border hairline bg-ink-950/50 px-4 py-3 text-base text-cream focus:border-gold-300 focus:outline-none lg:text-sm"
             />
           </label>
         </Step>
@@ -189,7 +191,7 @@ export function CheckoutForm() {
         <p role="alert" className="mt-4 min-h-5 text-sm text-red-300">
           {error}
         </p>
-        <Button type="submit" size="lg" disabled={submitting} className="mt-2 w-full">
+        <Button ref={submitRef} type="submit" size="lg" disabled={submitting} className="mt-2 w-full">
           {submitting ? (
             <>
               <LoaderCircle className="size-4 animate-spin" /> Placing order
@@ -205,6 +207,19 @@ export function CheckoutForm() {
           {siteConfig.legalAge} can collect or sign for a delivery.
         </p>
       </aside>
+
+      {/* Phones: total and submit stay in reach while filling in the form. */}
+      <MobileActionBar anchor={submitRef}>
+        <div className="flex items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-[0.6rem] font-semibold tracking-[0.24em] text-smoke uppercase">Total</p>
+            <p className="font-display text-2xl leading-tight text-gold-100 tabular-nums">{formatPrice(totals.total)}</p>
+          </div>
+          <Button type="submit" disabled={submitting}>
+            {submitting ? <LoaderCircle className="size-4 animate-spin" /> : siteConfig.demoMode ? "Place order" : "Pay now"}
+          </Button>
+        </div>
+      </MobileActionBar>
     </form>
   );
 }
@@ -244,7 +259,7 @@ function Field({
       <span className="text-[0.6rem] font-semibold tracking-[0.26em] text-smoke uppercase">{label}</span>
       <input
         {...props}
-        className="h-12 w-full border hairline bg-ink-950/50 px-4 text-sm text-cream transition-colors focus:border-gold-300 focus:outline-none"
+        className="h-12 w-full border hairline bg-ink-950/50 px-4 text-base text-cream transition-colors focus:border-gold-300 focus:outline-none lg:text-sm"
       />
     </label>
   );

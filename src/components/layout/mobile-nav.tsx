@@ -3,7 +3,8 @@
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion, useDragControls, useReducedMotion, type PanInfo } from "motion/react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/brand/logo";
 import { Portal } from "@/components/ui/portal";
 import { mainNav, siteConfig } from "@/config/site";
@@ -13,8 +14,53 @@ import { useUI } from "@/lib/ui-store";
 import { DESKTOP_QUERY, useMediaQuery } from "@/lib/use-media-query";
 import { useDialogFocus } from "@/lib/use-dialog-focus";
 
+/** A small browser-only launcher, outside the header's fixed-position containing block. */
+export function MobileMenuTrigger() {
+  const pathname = usePathname();
+  const [pastHero, setPastHero] = useState(false);
+  const open = useUI((s) => s.panel === "menu");
+  const openPanel = useUI((s) => s.openPanel);
+  useEffect(() => {
+    if (pathname !== "/") return;
+    let intersection: IntersectionObserver | undefined;
+    const attach = () => {
+      const hero = document.querySelector("[data-site-hero]");
+      if (!hero) return;
+      intersection = new IntersectionObserver(([entry]) => {
+        setPastHero(!entry.isIntersecting && entry.boundingClientRect.bottom <= 0);
+      });
+      intersection.observe(hero);
+      pending.disconnect();
+    };
+    // The home route can stream after this shared layout has hydrated.
+    const pending = new MutationObserver(attach);
+    pending.observe(document.querySelector("main") ?? document.body, { childList: true, subtree: true });
+    attach();
+    return () => {
+      pending.disconnect();
+      intersection?.disconnect();
+    };
+  }, [pathname]);
+  const visible = pathname !== "/" || pastHero;
+  return (
+    <button
+      type="button"
+      onClick={() => openPanel("menu")}
+      aria-label="Open menu"
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      aria-controls="site-menu-panel"
+      hidden={!visible}
+      className="browser-menu-fab fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[calc(1rem+env(safe-area-inset-bottom))] z-50 flex h-12 items-center justify-center gap-2 rounded-full border border-gold-300/40 bg-ink-900/95 px-4 text-xs font-semibold text-gold-100 shadow-[0_6px_28px_rgb(0_0_0/0.55)] backdrop-blur-xl transition-colors hover:bg-ink-700 active:bg-ink-700"
+    >
+      <Menu className="size-4" strokeWidth={1.5} aria-hidden="true" />
+      Menu
+    </button>
+  );
+}
+
 export function MobileNav({ categories }: { categories: Pick<Category, "slug" | "name" | "image">[] }) {
-  // Opened from the header (lg–xl) or the mobile tab bar.
+  // Opened from the browser header or the installed app's bottom tabs.
   const open = useUI((s) => s.panel === "menu");
   const openPanel = useUI((s) => s.openPanel);
   const close = useUI((s) => s.closePanel);
@@ -61,6 +107,7 @@ export function MobileNav({ categories }: { categories: Pick<Category, "slug" | 
               />
               <motion.div
                 key="menu-panel"
+                id="site-menu-panel"
                 ref={panel}
                 role="dialog"
                 aria-modal="true"

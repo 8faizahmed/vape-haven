@@ -16,7 +16,7 @@ export function ELiquidBanner() {
       />
       <div className="absolute inset-0 -z-10 bg-ink-950/60" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgb(5_5_5/0.2)_0%,var(--color-ink-950)_85%)]" />
-      <div className="mx-auto max-w-3xl px-5 py-24 text-center">
+      <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-24">
         <Reveal>
           <Eyebrow className="justify-center">The e-liquid bar</Eyebrow>
           <h2 className="mt-6 font-display text-5xl leading-[1.02] font-medium sm:text-6xl lg:text-7xl">

@@ -16,8 +16,8 @@ const item =
   "relative flex h-full min-h-16 min-w-0 flex-col items-center justify-center gap-1 py-2 text-[0.58rem] leading-4 font-semibold tracking-[0.16em] uppercase transition-[color,scale] duration-200 active:scale-90";
 
 /**
- * App-style navigation pinned to the bottom of the screen on phones and
- * tablets. Wrap in <Suspense> with a plain <TabBar /> fallback.
+ * Bottom tabs for installed, standalone phone/tablet apps. Browser tabs use
+ * the header instead. Wrap in <Suspense> with a plain <TabBar /> fallback.
  */
 export function TabBar({ pathname }: { pathname?: string }) {
   const panel = useUI((s) => s.panel);
@@ -55,7 +55,7 @@ export function TabBar({ pathname }: { pathname?: string }) {
   return (
     <nav
       aria-label="App"
-      className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t hairline bg-ink-950/85 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl select-none lg:hidden"
+      className="app-tab-bar fixed inset-x-0 bottom-0 z-40 overflow-visible border-t hairline bg-ink-950/85 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl select-none lg:hidden"
     >
       <ul className="mx-auto grid h-16 min-h-16 max-w-lg grid-cols-5 overflow-visible">
         <li>

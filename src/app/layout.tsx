@@ -11,6 +11,7 @@ import { HealthWarning } from "@/components/health-warning";
 import { InlineScript } from "@/components/inline-script";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { MobileMenuTrigger } from "@/components/layout/mobile-nav";
 import { ActiveTabBar, TabBar } from "@/components/layout/tab-bar";
 import { siteConfig } from "@/config/site";
 import { ageGateScript } from "@/lib/age-gate";
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <div id="site" className="flex min-h-dvh flex-col">
           <HealthWarning />
           <Header />
+          <Suspense fallback={null}><MobileMenuTrigger /></Suspense>
           <main className="flex-1">{children}</main>
           <Footer />
           <Suspense fallback={<TabBar />}>

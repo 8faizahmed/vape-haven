@@ -5,28 +5,40 @@ import { DESKTOP_QUERY } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
 /**
- * Sticky header that slides away while scrolling down on mobile and returns
- * on any scroll up, like a native app bar. Always visible on desktop.
+ * Browser navigation stays visible. Installed apps can hide their logo header
+ * while scrolling because their navigation remains in the bottom tab bar.
  */
 export function HeaderShell({ children }: { children: ReactNode }) {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     const desktop = matchMedia(DESKTOP_QUERY);
+    const standalone = matchMedia("(display-mode: standalone)");
     let last = scrollY;
     let travel = 0;
     const onScroll = () => {
       const y = scrollY;
       const dy = y - last;
       last = y;
-      if (desktop.matches || y < 160) return setHidden(false);
+      if (desktop.matches || !standalone.matches || y < 160) return setHidden(false);
       // Require a little travel in one direction so small jitters don't toggle it.
       travel = Math.sign(dy) === Math.sign(travel) ? travel + dy : dy;
       if (travel > 24) setHidden(true);
       else if (travel < -12) setHidden(false);
     };
+    const reset = () => {
+      last = scrollY;
+      travel = 0;
+      setHidden(false);
+    };
     addEventListener("scroll", onScroll, { passive: true });
-    return () => removeEventListener("scroll", onScroll);
+    standalone.addEventListener("change", reset);
+    desktop.addEventListener("change", reset);
+    return () => {
+      removeEventListener("scroll", onScroll);
+      standalone.removeEventListener("change", reset);
+      desktop.removeEventListener("change", reset);
+    };
   }, []);
 
   return (

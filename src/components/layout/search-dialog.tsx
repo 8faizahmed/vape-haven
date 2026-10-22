@@ -22,7 +22,7 @@ export type SearchItem = {
   keywords: string;
 };
 
-/** Header search icon (desktop); the mobile tab bar has its own. */
+/** Header search icon in browsers; installed apps also have a tab-bar trigger. */
 export function SearchTrigger() {
   const openPanel = useUI((s) => s.openPanel);
   return (

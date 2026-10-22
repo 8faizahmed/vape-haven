@@ -18,7 +18,7 @@ function optionSummary(product: Product) {
 export function ProductCard({ product, className }: { product: Product; className?: string }) {
   const href = `/products/${product.slug}`;
   return (
-    <article className={cn("group relative flex flex-col", className)}>
+    <article className={cn("group relative flex flex-col transition-transform duration-200 active:scale-[0.98] lg:active:scale-100", className)}>
       <Tilt className="aspect-square overflow-hidden border hairline bg-ink-950 transition-colors duration-500 group-hover:border-gold-400/40">
         <Link href={href} aria-label={product.name} data-cursor="view" data-product-image className="absolute inset-0">
           <ViewTransition name={`product-${product.slug}`} share="morph" default="none">
@@ -38,7 +38,10 @@ export function ProductCard({ product, className }: { product: Product; classNam
           {!product.inStock && <span className="border border-ink-500 bg-ink-950/80 px-2.5 py-1 text-[0.55rem] font-bold tracking-[0.26em] text-mist uppercase">Sold out</span>}
           {product.inStock && product.badges?.map((b) => <ProductBadge key={b} badge={b} />)}
         </div>
-        <div className="absolute inset-x-0 bottom-0 translate-y-0 transition-transform duration-500 ease-luxe lg:translate-y-full lg:group-focus-within:translate-y-0 lg:group-hover:translate-y-0">
+        <div className="absolute right-2.5 bottom-2.5 lg:hidden">
+          <QuickAdd product={product} variant="round" />
+        </div>
+        <div className="absolute inset-x-0 bottom-0 hidden translate-y-full transition-transform duration-500 ease-luxe group-focus-within:translate-y-0 group-hover:translate-y-0 lg:block">
           <QuickAdd product={product} />
         </div>
       </Tilt>

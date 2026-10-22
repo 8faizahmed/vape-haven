@@ -1,14 +1,12 @@
 "use client";
 
 import { Check, Search, SlidersHorizontal, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ProductCard } from "@/components/product/product-card";
 import { Button } from "@/components/ui/button";
-import { Portal } from "@/components/ui/portal";
+import { Sheet } from "@/components/ui/sheet";
 import type { Category, NicotineType, Product } from "@/lib/commerce/types";
-import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { matchesQuery, searchKeywords } from "@/lib/search";
 import { cn } from "@/lib/utils";
 
@@ -60,12 +58,6 @@ export function ShopExplorer({
   const pathname = usePathname();
   const params = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
-
-  useEffect(() => {
-    if (!filtersOpen) return;
-    lockScroll();
-    return unlockScroll;
-  }, [filtersOpen]);
 
   const q = params.get("q") ?? "";
   const selectedCategories = lockedCategory ? [] : list(params.get("category"));
@@ -182,9 +174,10 @@ export function ShopExplorer({
               defaultValue={q}
               key={q}
               placeholder="Search this collection"
+              enterKeyHint="search"
               onKeyDown={(e) => e.key === "Enter" && setParam("q", e.currentTarget.value.trim() || null)}
               onBlur={(e) => e.currentTarget.value.trim() !== q && setParam("q", e.currentTarget.value.trim() || null)}
-              className="h-11 w-full bg-transparent pl-7 text-sm text-cream placeholder:text-smoke focus:outline-none"
+              className="h-11 w-full bg-transparent pl-7 text-base text-cream placeholder:text-smoke focus:outline-none lg:text-sm"
             />
           </label>
           <button
@@ -199,7 +192,7 @@ export function ShopExplorer({
             <select
               value={sort}
               onChange={(e) => setParam("sort", e.target.value === "featured" ? null : e.target.value)}
-              className="cursor-pointer bg-transparent text-sm text-cream focus:outline-none [&>option]:bg-ink-800"
+              className="cursor-pointer bg-transparent text-base text-cream focus:outline-none lg:text-sm [&>option]:bg-ink-800"
             >
               {SORTS.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -254,47 +247,17 @@ export function ShopExplorer({
         )}
       </div>
 
-      <Portal>
-        <AnimatePresence>
-          {filtersOpen && (
-            <>
-              <motion.div
-                className="fixed inset-0 z-[90] bg-ink-950/70 backdrop-blur-sm lg:hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setFiltersOpen(false)}
-              />
-              <motion.div
-                role="dialog"
-                aria-modal="true"
-                aria-label="Filters"
-                className="fixed inset-y-0 left-0 z-[100] flex w-full max-w-sm flex-col border-r hairline bg-ink-850 lg:hidden"
-                initial={{ x: "-100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "-100%" }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="flex items-center justify-between border-b hairline px-6 py-5">
-                  <p className="font-display text-2xl">Filters</p>
-                  <button type="button" onClick={() => setFiltersOpen(false)} aria-label="Close filters" className="p-1 text-mist">
-                    <X className="size-5" />
-                  </button>
-                </div>
-                <div data-lenis-prevent className="flex-1 overflow-y-auto overscroll-contain px-6 py-8">{filters}</div>
-                <div className="grid grid-cols-2 gap-3 border-t hairline p-6">
-                  <Button variant="outline" size="sm" onClick={clearAll}>
-                    Clear
-                  </Button>
-                  <Button size="sm" onClick={() => setFiltersOpen(false)}>
-                    Show {results.length}
-                  </Button>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </Portal>
+      <Sheet open={filtersOpen} onClose={() => setFiltersOpen(false)} label="Filters" title="Filters" side="left">
+        <div data-lenis-prevent className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-7">
+          {filters}
+        </div>
+        <div className="grid grid-cols-2 gap-3 border-t hairline px-6 py-4">
+          <Button variant="outline" onClick={clearAll}>
+            Clear
+          </Button>
+          <Button onClick={() => setFiltersOpen(false)}>Show {results.length}</Button>
+        </div>
+      </Sheet>
     </div>
   );
 }
@@ -320,7 +283,7 @@ function FilterCheckbox({
   onChange: () => void;
 }) {
   return (
-    <label className="group flex cursor-pointer items-center gap-3 text-sm">
+    <label className="group flex min-h-9 cursor-pointer items-center gap-3 text-sm lg:min-h-0">
       <input type="checkbox" checked={checked} onChange={onChange} className="peer sr-only" />
       <span
         className={cn(

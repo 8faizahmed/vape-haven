@@ -102,17 +102,26 @@
 }
 
 @layer base {
-  /* Height of the mobile tab bar (layout/tab-bar.tsx); zero where it's hidden. */
+  /* Browser tabs use the top header; only installed apps reserve a bottom bar. */
   :root {
-    --tabbar-h: 4rem;
+    --tabbar-h: 0px;
+    --tabbar-space: 0px;
+    --floating-menu-space: 0px;
   }
-  @media (min-width: 64rem) {
+  @media (width < 64rem) {
     :root {
-      --tabbar-h: 0px;
+      --floating-menu-space: calc(4rem + env(safe-area-inset-bottom));
+    }
+  }
+  @media (display-mode: standalone) and (width < 64rem) {
+    :root {
+      --tabbar-h: 4rem;
+      --tabbar-space: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+      --floating-menu-space: 0px;
     }
   }
   html {
-    scroll-padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 1rem);
+    scroll-padding-bottom: calc(max(var(--tabbar-space), var(--floating-menu-space)) + 1rem);
     color-scheme: dark;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
@@ -154,9 +163,38 @@
   }
 }
 
+/* Keep website navigation out of the browser's bottom address-bar region. */
+.app-tab-bar,
+.browser-menu-fab {
+  display: none;
+}
+.browser-menu-fab[hidden] {
+  display: none !important;
+}
+@media (width < 64rem) {
+  .browser-menu-fab {
+    display: flex;
+  }
+}
+@media (display-mode: standalone) and (width < 64rem) {
+  .app-tab-bar {
+    display: block;
+  }
+  .browser-menu-fab,
+  .mobile-browser-actions {
+    display: none;
+  }
+  .site-header-row {
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    padding-left: max(1.25rem, env(safe-area-inset-left));
+    padding-right: max(1.25rem, env(safe-area-inset-right));
+  }
+}
+
 /* The hero uses the space between the warning/header and the phone tab bar. */
 @utility mobile-hero {
-  min-height: calc(100svh - var(--hero-top, 7.5rem) - var(--tabbar-h, 4rem) - env(safe-area-inset-bottom));
+  min-height: calc(100svh - var(--hero-top, 7.5rem) - var(--tabbar-space, 4rem));
   @media (min-width: 64rem) {
     min-height: calc(100svh - 7rem);
   }

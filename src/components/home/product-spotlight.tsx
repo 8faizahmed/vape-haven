@@ -18,7 +18,7 @@ export function ProductSpotlight({ product }: { product: Product }) {
         aria-hidden
         className="absolute top-1/2 right-0 size-[60vw] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgb(212_171_85/0.14),transparent_65%)]"
       />
-      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-8 lg:py-32">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:gap-14 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-8 lg:py-32">
         <div>
           <Reveal>
             <Eyebrow>In the spotlight</Eyebrow>

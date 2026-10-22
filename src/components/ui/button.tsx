@@ -24,7 +24,8 @@ type StyleProps = {
 
 export function buttonStyles({ variant = "primary", size = "md", className }: StyleProps = {}) {
   return cn(
-    "inline-flex cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap font-sans font-semibold uppercase tracking-[0.24em] transition-all duration-500 ease-luxe disabled:pointer-events-none disabled:opacity-40",
+    // Quick press-in for touch feedback, then the usual slow luxe release.
+    "inline-flex cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap font-sans font-semibold uppercase tracking-[0.24em] transition-all duration-500 ease-luxe active:scale-[0.97] active:duration-100 disabled:pointer-events-none disabled:opacity-40",
     variants[variant],
     sizes[size],
     className,

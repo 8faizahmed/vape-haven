@@ -1,9 +1,11 @@
 "use client";
 
 import { Check, IdCard, Store, Truck } from "lucide-react";
-import { useState } from "react";
+import Image from "next/image";
+import { useRef, useState } from "react";
 import { QuantityStepper } from "@/components/cart/quantity-stepper";
 import { Button } from "@/components/ui/button";
+import { MobileActionBar } from "@/components/ui/mobile-action-bar";
 import { siteConfig } from "@/config/site";
 import { flyToCart } from "@/components/fx/fly-to-cart";
 import { useCart } from "@/lib/cart-store";
@@ -14,12 +16,14 @@ export function ProductPurchase({ product }: { product: Product }) {
   const add = useCart((s) => s.add);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const actions = useRef<HTMLDivElement>(null);
+  const barImage = useRef<HTMLSpanElement>(null);
   const [selected, setSelected] = useState<Record<string, string>>(() =>
     Object.fromEntries(product.options.map((o) => [o.name, o.values[0]])),
   );
 
-  const handleAdd = () => {
-    flyToCart(document.querySelector("[data-gallery-image]"), product.images[0]);
+  const handleAdd = (source: Element | null = document.querySelector("[data-gallery-image]")) => {
+    flyToCart(source, product.images[0]);
     add(
       {
         productId: product.id,
@@ -74,11 +78,11 @@ export function ProductPurchase({ product }: { product: Product }) {
         </fieldset>
       ))}
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div ref={actions} className="flex flex-wrap items-center gap-3">
         <QuantityStepper value={quantity} onChange={setQuantity} />
         <Button
           size="lg"
-          onClick={handleAdd}
+          onClick={() => handleAdd()}
           disabled={!product.inStock}
           className="min-w-0 flex-1 basis-56"
         >
@@ -93,6 +97,26 @@ export function ProductPurchase({ product }: { product: Product }) {
           )}
         </Button>
       </div>
+
+      {product.inStock && (
+        <MobileActionBar anchor={actions}>
+          <div className="flex items-center gap-3">
+            <span ref={barImage} className="relative size-11 shrink-0 overflow-hidden border hairline bg-ink-950">
+              <Image src={product.images[0]} alt="" fill sizes="44px" className="object-cover" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate font-display text-lg leading-tight">{product.name}</span>
+              <span className="block truncate text-xs text-smoke">
+                {[...Object.values(selected), quantity > 1 && `× ${quantity}`].filter(Boolean).join(" · ") ||
+                  formatPrice(product.price)}
+              </span>
+            </span>
+            <Button size="sm" onClick={() => handleAdd(barImage.current)} className="shrink-0 px-4">
+              {added ? <Check className="size-4" /> : <>Add · {formatPrice(product.price * quantity)}</>}
+            </Button>
+          </div>
+        </MobileActionBar>
+      )}
 
       <ul className="grid gap-4 border-y hairline py-6 text-sm">
         <li className="flex gap-4">

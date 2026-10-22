@@ -78,7 +78,7 @@ export function DeviceFinder({ products, categories }: { products: FinderProduct
 
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-7xl gap-14 px-5 py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:px-8 lg:py-32">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:gap-14 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:px-8 lg:py-32">
         <div className="lg:pt-6">
           <Eyebrow>Device finder</Eyebrow>
           <h2 className="mt-5 font-display text-5xl leading-[1] font-medium sm:text-6xl">
@@ -99,7 +99,7 @@ export function DeviceFinder({ products, categories }: { products: FinderProduct
           <p className="mt-3 text-xs text-smoke">{done ? "Your match is ready" : `Question ${step + 1} of ${QUESTIONS.length}`}</p>
         </div>
 
-        <GlowCard className="min-h-[30rem] border hairline bg-ink-850/80 p-6 sm:p-10">
+        <GlowCard className="border hairline bg-ink-850/80 p-5 sm:min-h-[30rem] sm:p-10">
           <AnimatePresence mode="wait">
             {!done ? (
               <motion.div

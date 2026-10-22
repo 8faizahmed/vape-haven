@@ -27,7 +27,7 @@ export async function Footer() {
   const hours = hoursRows();
 
   return (
-    <footer className="relative mt-auto border-t hairline bg-ink-950 pb-[calc(var(--tabbar-h)+env(safe-area-inset-bottom))]">
+    <footer className="relative mt-auto border-t hairline bg-ink-950 pb-[var(--tabbar-space)]">
       <div className="mx-auto max-w-7xl px-5 pt-12 pb-10 sm:pt-20 lg:px-8">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-14">
           <div className="col-span-2 lg:col-span-1">

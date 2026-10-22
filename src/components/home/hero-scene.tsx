@@ -34,6 +34,7 @@ export function HeroScene({ background, overlay, children }: { background: React
   return (
     <section
       ref={ref}
+      data-site-hero
       className="mobile-hero relative isolate flex items-end overflow-hidden lg:items-center"
     >
       <motion.div style={{ y: reducedMotion ? 0 : sceneY, scale: reducedMotion ? 1 : sceneScale }} className="absolute inset-0 -z-10">

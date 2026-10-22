@@ -28,12 +28,13 @@ export async function Header() {
   }));
   const categoryLinks = categories.map(({ slug, name, image }) => ({ slug, name, image }));
 
-  // Below `lg` the tab bar carries menu, search and cart, so the bar is just the logo.
+  // Mobile browsers use header controls; standalone apps keep their bottom tabs.
   return (
     <HeaderShell>
-      <div className="mx-auto grid h-14 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 lg:h-20 lg:px-8">
+      <div className="site-header-row mx-auto grid h-14 max-w-7xl grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-1 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] lg:h-20 lg:grid-cols-[1fr_auto_1fr] lg:gap-4 lg:px-8">
         <div className="flex items-center gap-8">
           <MobileNav categories={categoryLinks} />
+          <div className="mobile-browser-actions lg:hidden"><SearchTrigger /></div>
           <nav aria-label="Primary" className="hidden items-center gap-7 xl:flex">
             <Suspense fallback={<NavLinks items={leftNav} />}>
               <ActiveNavLinks items={leftNav} />
@@ -42,7 +43,7 @@ export async function Header() {
         </div>
 
         <Link href="/" aria-label="Vape Haven 369 — home" className="justify-self-center">
-          <Logo className="[&>svg]:hidden sm:[&>svg]:block" />
+          <Logo className="header-wordmark [&>svg]:hidden lg:[&>svg]:block" />
         </Link>
 
         <div className="flex items-center justify-end gap-2 xl:gap-7">
@@ -51,8 +52,8 @@ export async function Header() {
               <ActiveNavLinks items={rightNav} />
             </Suspense>
           </nav>
-          <div className="hidden items-center lg:flex">
-            <SearchTrigger />
+          <div className="mobile-browser-actions flex items-center">
+            <div className="hidden lg:block"><SearchTrigger /></div>
             <CartButton />
           </div>
         </div>

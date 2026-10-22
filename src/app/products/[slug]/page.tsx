@@ -132,7 +132,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
 
       {related.length > 0 && (
         <section className="border-t hairline bg-ink-950">
-          <div className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+          <div className="mx-auto max-w-7xl px-5 py-16 sm:py-24 lg:px-8">
             <Reveal>
               <SectionHeading
                 eyebrow="You may also like"
