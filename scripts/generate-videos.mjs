@@ -8,9 +8,6 @@
 // Image-to-video clips start from a still in assets/originals/ (run `npm run images`
 // first). Each clip is turned into a seamless forward-then-reverse loop, audio is
 // stripped, and desktop/mobile MP4s plus a poster frame are written to public/videos/.
-//
-// If assets/originals/videos/<name>-upscaled.mp4 exists (e.g. a Real-ESRGAN upscale
-// of the 720p Veo clip), it is used as the encode source instead of the raw clip.
 
 import { execFile } from "node:child_process";
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
@@ -34,8 +31,7 @@ const videos = [
     image: "assets/originals/scenes/hero-boutique.jpg",
     prompt:
       "Slow, steady, cinematic dolly push-in through an empty, upscale black and gold boutique toward the illuminated display shelves. Warm LED shelf lighting glows softly; gentle reflections glide across the polished dark floor and the black marble counter. The architecture and products stay perfectly rigid and stable. Smooth gimbal motion, luxurious pacing.",
-    // Encoded from the 2x Real-ESRGAN upscale (hero-boutique-upscaled.mp4).
-    widths: { desktop: 1920, mobile: 960 },
+    widths: { desktop: 1280, mobile: 854 },
   },
   {
     name: "vapor",
@@ -158,19 +154,16 @@ async function processVideo(video) {
     console.log(`✓ veo    ${video.name} (${((Date.now() - started) / 1000).toFixed(0)}s)`);
   }
 
-  const upscaled = path.join(ROOT, "assets/originals/videos", `${video.name}-upscaled.mp4`);
-  const source = (await exists(upscaled)) ? upscaled : raw;
-
-  await encode(source, desktop, video.widths.desktop);
-  await encode(source, path.join(outDir, `${video.name}-mobile.mp4`), video.widths.mobile);
+  await encode(raw, desktop, video.widths.desktop);
+  await encode(raw, path.join(outDir, `${video.name}-mobile.mp4`), video.widths.mobile);
 
   const frame = path.join(ROOT, "assets/originals/videos", `${video.name}-poster.png`);
-  await run(ffmpegPath, ["-y", "-ss", String(video.posterAt ?? 0), "-i", source, "-frames:v", "1", frame]);
+  await run(ffmpegPath, ["-y", "-ss", String(video.posterAt ?? 0), "-i", raw, "-frames:v", "1", frame]);
   await sharp(await readFile(frame))
     .resize({ width: video.widths.desktop })
     .webp({ quality: 80 })
     .toFile(path.join(outDir, `${video.name}-poster.webp`));
-  console.log(`✓ encode ${video.name}${source === upscaled ? " (from upscaled master)" : ""}`);
+  console.log(`✓ encode ${video.name}`);
 }
 
 const queue = videos.filter((v) => only.length === 0 || only.includes(v.name));
