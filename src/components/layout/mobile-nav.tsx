@@ -99,7 +99,7 @@ export function MobileNav({ categories }: { categories: Pick<Category, "slug" | 
               <motion.div
                 key="menu-backdrop"
                 aria-hidden="true"
-                className="fixed inset-0 z-[90] bg-ink-950/70 backdrop-blur-sm xl:hidden"
+                className="safe-area-backdrop fixed inset-0 z-[90] bg-ink-950/70 backdrop-blur-sm xl:hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
