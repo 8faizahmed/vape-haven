@@ -113,7 +113,7 @@ export function MobileNav({ categories }: { categories: Pick<Category, "slug" | 
                 aria-modal="true"
                 aria-label="Menu"
                 tabIndex={-1}
-                className="fixed inset-x-0 bottom-0 z-[100] flex max-h-[calc(100dvh-max(1rem,env(safe-area-inset-top)))] flex-col overflow-hidden rounded-t-3xl border-t hairline bg-ink-950 pb-[env(safe-area-inset-bottom)] outline-none lg:inset-0 lg:max-h-none lg:rounded-none lg:border-0 lg:pt-[env(safe-area-inset-top)] xl:hidden"
+                className="grain fixed inset-x-0 bottom-0 z-[100] flex max-h-[calc(100dvh-max(1rem,env(safe-area-inset-top)))] flex-col overflow-hidden rounded-t-3xl border-t hairline bg-ink-950 pb-[env(safe-area-inset-bottom)] outline-none lg:inset-0 lg:max-h-none lg:rounded-none lg:border-0 lg:pt-[env(safe-area-inset-top)] xl:hidden"
                 initial={desktop ? { opacity: 0 } : { y: "100%" }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={desktop ? { opacity: 0 } : { y: "100%" }}

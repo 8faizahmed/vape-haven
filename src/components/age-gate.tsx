@@ -97,7 +97,7 @@ export function AgeGate() {
       aria-modal="true"
       aria-labelledby="age-gate-title"
       tabIndex={-1}
-      className={cn("fixed inset-0 z-[150] outline-none", leaving && "pointer-events-none")}
+      className={cn("grain fixed inset-0 z-[150] outline-none", leaving && "pointer-events-none")}
     >
       <div className={cn(curtain, "top-0", leaving && "-translate-y-full delay-[550ms]")} />
       <div className={cn(curtain, "bottom-0", leaving && "translate-y-full delay-[550ms]")} />

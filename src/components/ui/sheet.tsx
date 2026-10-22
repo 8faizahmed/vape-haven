@@ -79,7 +79,7 @@ export function Sheet({
               aria-label={label}
               tabIndex={-1}
               className={cn(
-                "fixed z-[100] flex flex-col bg-ink-850 outline-none",
+                "grain fixed z-[100] flex flex-col bg-ink-850 outline-none",
                 desktop
                   ? cn("inset-y-0 h-dvh w-full max-w-md hairline", side === "right" ? "right-0 border-l" : "left-0 border-r")
                   : "inset-x-0 bottom-0 max-h-[calc(100dvh-2.5rem)] rounded-t-[1.25rem] border-t border-gold-400/25 pb-[env(safe-area-inset-bottom)] shadow-[0_-30px_80px_-20px_rgb(0_0_0/0.85)]",

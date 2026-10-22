@@ -102,7 +102,7 @@ export function SearchDialog({
               aria-modal="true"
               aria-label="Search"
               data-lenis-prevent
-              className="fixed inset-x-0 top-0 z-[100] max-h-dvh overflow-y-auto overscroll-contain border-b hairline bg-ink-850 pt-[env(safe-area-inset-top)]"
+              className="grain fixed inset-x-0 top-0 z-[100] max-h-dvh overflow-y-auto overscroll-contain border-b hairline bg-ink-850 pt-[env(safe-area-inset-top)]"
               initial={{ y: "-100%" }}
               animate={{ y: 0 }}
               exit={{ y: "-100%" }}
