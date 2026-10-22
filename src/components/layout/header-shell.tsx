@@ -44,9 +44,9 @@ export function HeaderShell({ children }: { children: ReactNode }) {
   return (
     <header
       className={cn(
-        // Solid on phones: iOS Safari tints the status bar from the element touching the top
-        // of the screen, and a translucent header lets scrolled content show through there.
-        "site-header grain sticky top-[var(--safe-area-top)] z-40 border-b hairline bg-ink-900 transition-[translate,filter] duration-500 ease-luxe lg:bg-ink-900/80 lg:backdrop-blur-xl",
+        // Solid on phones so it reads as one bar with the band above it (.site-header in
+        // globals.css) that fills iOS Safari's status-bar strip once the header sticks.
+        "site-header sticky top-[var(--safe-area-top)] z-40 border-b hairline bg-ink-900 transition-[translate,filter] duration-500 ease-luxe lg:bg-ink-900/80 lg:backdrop-blur-xl",
         hidden && "-translate-y-full lg:translate-y-0",
       )}
     >

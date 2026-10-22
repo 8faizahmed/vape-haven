@@ -55,7 +55,7 @@ export function TabBar({ pathname }: { pathname?: string }) {
   return (
     <nav
       aria-label="App"
-      className="app-tab-bar grain fixed inset-x-0 bottom-0 z-40 overflow-visible border-t hairline bg-ink-950/85 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl select-none lg:hidden"
+      className="app-tab-bar fixed inset-x-0 bottom-0 z-40 overflow-visible border-t hairline bg-ink-950/85 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl select-none lg:hidden"
     >
       <ul className="mx-auto grid h-16 min-h-16 max-w-lg grid-cols-5 overflow-visible">
         <li>

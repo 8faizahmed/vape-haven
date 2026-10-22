@@ -104,7 +104,6 @@
 @layer base {
   /* Browser tabs use the top header; only installed apps reserve a bottom bar. */
   :root {
-    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     --safe-area-top: env(safe-area-inset-top, 0px);
     --tabbar-h: 0px;
     --tabbar-space: 0px;
@@ -155,30 +154,21 @@
     outline: 1px solid var(--color-gold-300);
     outline-offset: 3px;
   }
-  /* Film grain over the page for a printed, tactile feel. It sits *under* the
-     header (z 40): iOS 26 Safari colours the status-bar strip from the fixed or
-     sticky bar it finds just below the top edge, and a page-wide layer on top
-     hides the header from that check. Raised UI carries its own grain (below). */
+  /* Film grain over the whole site for a printed, tactile feel.
+     It also has to stay above the header: iOS 26 Safari checks just below the
+     top edge for a fixed/sticky bar, and if it finds one in portrait it pulls
+     that bar up under the Dynamic Island (while reporting a zero top inset, so
+     the bar can't pad itself clear). With this layer on top Safari sees no
+     bar, keeps the header below the status bar, and paints the strip with
+     page content — which .site-header::before fills (see below). */
   body::after {
     content: "";
     position: fixed;
     inset: 0;
-    z-index: 30;
+    z-index: 200;
     pointer-events: none;
     opacity: 0.045;
-    background-image: var(--grain);
-  }
-}
-
-/* Grain for positioned UI above the page layer: header, tab bar, sheets, gate. */
-@utility grain {
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.045;
-    background-image: var(--grain);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
@@ -198,12 +188,11 @@
   background: var(--color-ink-900);
 }
 
-/* iOS 26 Safari paints the strip under the status bar / Dynamic Island with
-   whatever page content is scrolling past it — never with fixed elements, and
-   it sits outside the viewport (the safe-area inset is 0). So on phones the
-   sticky header reaches up into that strip with a solid band. At the top of
-   the page the health warning (z 50) covers the band; once the header sticks,
-   the band fills the strip. This backs up Safari's own header-colour tint. */
+/* In portrait, iOS 26 Safari keeps the page below the status bar / Dynamic
+   Island and paints that strip with whatever page content is scrolling past
+   it — never fixed elements. So on phones the sticky header reaches up into
+   the strip with a solid band: once the header sticks, the strip is solid.
+   At the top of the page the health warning (z 50) covers the band. */
 @media (width < 64rem) {
   .site-header::before {
     content: "";
