@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AgeGate } from "@/components/age-gate";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { CartHydrator } from "@/components/cart/cart-hydrator";
+import { ViewportDebug } from "@/components/dev/viewport-debug";
 import { Cursor } from "@/components/fx/cursor";
 import { FlyToCart } from "@/components/fx/fly-to-cart";
 import { SmoothScroll } from "@/components/fx/smooth-scroll";
@@ -75,6 +76,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Cursor />
         <SmoothScroll />
         <CartHydrator />
+        {/* TEMPORARY: iOS status-bar test panel, only with ?viewport-debug. */}
+        <ViewportDebug />
       </body>
     </html>
   );
