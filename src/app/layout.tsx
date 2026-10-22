@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AgeGate } from "@/components/age-gate";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { CartHydrator } from "@/components/cart/cart-hydrator";
+import { StatusBarTest } from "@/components/dev/status-bar-test";
 import { Cursor } from "@/components/fx/cursor";
 import { FlyToCart } from "@/components/fx/fly-to-cart";
 import { SmoothScroll } from "@/components/fx/smooth-scroll";
@@ -59,6 +60,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en-CA" className={`${display.variable} ${sans.variable}`} suppressHydrationWarning>
       <body className="min-h-dvh font-sans antialiased">
         <InlineScript html={ageGateScript} />
+        {/* TEMPORARY: iOS status-bar test, only with ?viewport-debug. */}
+        <StatusBarTest />
         <div id="site" className="flex min-h-dvh flex-col">
           <HealthWarning />
           <Header />
