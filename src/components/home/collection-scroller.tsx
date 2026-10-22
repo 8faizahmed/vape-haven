@@ -52,28 +52,17 @@ export function CollectionScroller({ categories, counts }: { categories: Categor
       className="relative"
       style={pinned ? { height: `calc(100svh + ${distance}px)` } : undefined}
     >
-      <div className={cn(pinned ? "sticky top-0 flex h-svh items-center overflow-hidden" : "py-20")}>
+      <div className={cn(pinned ? "sticky top-0 flex h-svh items-center overflow-hidden" : "py-12")}>
+        {!pinned && <CollectionIntro pinned={false} />}
         <motion.div
           ref={track}
           style={pinned ? { x } : undefined}
           className={cn(
             "flex items-center gap-6 px-5 md:w-max md:gap-10 lg:gap-14 lg:pr-[10vw] lg:pl-[8vw]",
-            !pinned && "scrollbar-none snap-x snap-mandatory overflow-x-auto pt-14 pb-4",
+            !pinned && "scrollbar-none scroll-px-5 snap-x snap-mandatory overflow-x-auto overscroll-x-contain pt-14 pb-4",
           )}
         >
-          <div className="w-[78vw] shrink-0 snap-start md:w-[38vw] lg:w-[30vw]">
-            <Eyebrow>The collection</Eyebrow>
-            <h2 className="mt-6 font-display text-5xl leading-[1] font-medium lg:text-7xl">
-              Everything you need, <Accent>curated.</Accent>
-            </h2>
-            <p className="mt-6 max-w-sm text-sm leading-relaxed text-mist">
-              From ready-to-go disposables to fully adjustable kits — every product on our shelves is chosen by our
-              team.
-            </p>
-            <p className="mt-10 inline-flex items-center gap-3 text-[0.62rem] font-semibold tracking-[0.3em] text-gold-300 uppercase">
-              {pinned ? "Keep scrolling" : "Swipe to explore"} <ArrowRight className="size-3.5" />
-            </p>
-          </div>
+          {pinned && <CollectionIntro pinned />}
 
           {categories.map((category, i) => (
             <Link
@@ -133,5 +122,22 @@ export function CollectionScroller({ categories, counts }: { categories: Categor
         )}
       </div>
     </section>
+  );
+}
+
+function CollectionIntro({ pinned }: { pinned: boolean }) {
+  return (
+    <div className={pinned ? "w-[38vw] shrink-0 lg:w-[30vw]" : "px-5"}>
+      <Eyebrow>The collection</Eyebrow>
+      <h2 className="mt-4 font-display text-4xl leading-[1] font-medium md:mt-6 md:text-5xl lg:text-7xl">
+        Everything you need, <Accent>curated.</Accent>
+      </h2>
+      <p className="mt-4 max-w-sm text-sm leading-relaxed text-mist md:mt-6">
+        From ready-to-go disposables to fully adjustable kits — every product on our shelves is chosen by our team.
+      </p>
+      <p className="mt-5 inline-flex items-center gap-3 text-[0.62rem] font-semibold tracking-[0.3em] text-gold-300 uppercase md:mt-10">
+        {pinned ? "Keep scrolling" : "Swipe to explore"} <ArrowRight className="size-3.5" />
+      </p>
+    </div>
   );
 }

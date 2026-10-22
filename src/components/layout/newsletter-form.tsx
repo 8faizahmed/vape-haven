@@ -34,7 +34,7 @@ export function NewsletterForm({ className }: { className?: string }) {
           required
           autoComplete="email"
           placeholder="Your email address"
-          className="w-full bg-transparent py-3 text-sm text-cream placeholder:text-smoke focus:outline-none"
+          className="min-w-0 w-full bg-transparent py-3 text-base text-cream placeholder:text-smoke focus:outline-none lg:text-sm"
         />
         <button type="submit" className="shrink-0 pl-4 text-[0.65rem] font-semibold tracking-[0.24em] text-gold-200 uppercase hover:text-gold-50">
           Subscribe

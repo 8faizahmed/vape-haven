@@ -33,7 +33,7 @@ export function HeaderShell({ children }: { children: ReactNode }) {
     <header
       className={cn(
         "sticky top-0 z-40 border-b hairline bg-ink-900/80 backdrop-blur-xl transition-transform duration-500 ease-luxe",
-        hidden && "-translate-y-full",
+        hidden && "-translate-y-full lg:translate-y-0",
       )}
     >
       {children}

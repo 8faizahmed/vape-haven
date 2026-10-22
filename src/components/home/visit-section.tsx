@@ -6,6 +6,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { Accent, Eyebrow } from "@/components/ui/section-heading";
 import { siteConfig } from "@/config/site";
 import { hoursRows } from "@/lib/hours";
+import { MobileVisitCard } from "./mobile-visit-card";
 
 export const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
   `${siteConfig.name} ${siteConfig.contact.mapQuery}`,
@@ -15,8 +16,9 @@ export function VisitSection() {
   const { contact } = siteConfig;
   const hours = hoursRows();
   return (
-    <section className="mx-auto max-w-7xl px-5 py-24 lg:px-8 lg:py-32">
-      <div className="grid items-center gap-14 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+    <section className="mx-auto max-w-7xl px-5 py-16 sm:py-24 lg:px-8 lg:py-32">
+      <MobileVisitCard directionsUrl={directionsUrl} />
+      <div className="hidden items-center gap-8 sm:gap-14 lg:grid lg:grid-cols-[1.15fr_1fr] lg:gap-20">
         <Reveal className="relative aspect-[3/2] overflow-hidden border hairline">
           <Image
             src="/images/scenes/storefront.webp"
@@ -67,7 +69,11 @@ export function VisitSection() {
               <Phone className="mt-1 size-4 shrink-0 text-gold-300" strokeWidth={1.5} />
               <div>
                 <dt className="text-[0.6rem] font-semibold tracking-[0.28em] text-smoke uppercase">Phone</dt>
-                <dd className="mt-1.5 text-sm text-cream">{contact.phone}</dd>
+                <dd className="mt-1.5 text-sm text-cream">
+                  <a href={`tel:${contact.phone.replace(/\D/g, "")}`} className="inline-flex min-h-11 items-center text-gold-200 underline-offset-4 hover:underline lg:min-h-0">
+                    {contact.phone}
+                  </a>
+                </dd>
               </div>
             </div>
           </dl>

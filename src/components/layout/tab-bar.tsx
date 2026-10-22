@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 type Tab = "home" | "shop" | "search" | "cart" | "menu";
 
 const item =
-  "relative flex h-full flex-col items-center justify-center gap-1 text-[0.58rem] font-semibold tracking-[0.16em] uppercase transition-[color,scale] duration-200 active:scale-90";
+  "relative flex h-full min-h-16 min-w-0 flex-col items-center justify-center gap-1 py-2 text-[0.58rem] leading-4 font-semibold tracking-[0.16em] uppercase transition-[color,scale] duration-200 active:scale-90";
 
 /**
  * App-style navigation pinned to the bottom of the screen on phones and
@@ -40,11 +40,11 @@ export function TabBar({ pathname }: { pathname?: string }) {
         />
       )}
       <span
-        className="relative"
+        className="relative flex size-6 shrink-0 items-center justify-center overflow-visible"
         ref={id === "cart" ? cart.scope : undefined}
         data-cart-target={id === "cart" ? "" : undefined}
       >
-        <Icon className="size-[1.35rem]" strokeWidth={active === id ? 1.75 : 1.4} />
+        <Icon className="size-[1.35rem] shrink-0 overflow-visible" strokeWidth={active === id ? 1.75 : 1.4} />
         {extra}
       </span>
       {label}
@@ -55,9 +55,9 @@ export function TabBar({ pathname }: { pathname?: string }) {
   return (
     <nav
       aria-label="App"
-      className="fixed inset-x-0 bottom-0 z-40 border-t hairline bg-ink-950/85 px-[env(safe-area-inset-left)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl select-none lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t hairline bg-ink-950/85 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl select-none lg:hidden"
     >
-      <ul className="mx-auto grid h-[var(--tabbar-h)] max-w-lg grid-cols-5">
+      <ul className="mx-auto grid h-16 min-h-16 max-w-lg grid-cols-5 overflow-visible">
         <li>
           <Link href="/" aria-current={route === "home" ? "page" : undefined} className={cn(item, color("home"))}>
             {tab("home", "Home", House)}

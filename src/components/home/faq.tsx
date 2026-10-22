@@ -34,7 +34,7 @@ export const faqs = [
 
 export function Faq() {
   return (
-    <section className="mx-auto max-w-4xl px-5 pt-8 pb-24 lg:pt-12 lg:pb-32">
+    <section className="mx-auto max-w-4xl px-5 pt-8 pb-16 sm:pb-24 lg:pt-12 lg:pb-32">
       <Reveal>
         <SectionHeading
           align="center"
@@ -46,14 +46,16 @@ export function Faq() {
           }
         />
       </Reveal>
-      <Reveal delay={0.1} className="mt-14 border-t hairline">
+      <Reveal delay={0.1} className="mt-8 grid gap-3 lg:mt-14 lg:gap-0 lg:border-t hairline">
         {faqs.map((item) => (
-          <details key={item.q} className="group border-b hairline">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-display text-xl text-cream transition-colors hover:text-gold-200 sm:text-2xl [&::-webkit-details-marker]:hidden">
+          <details key={item.q} className="group rounded-2xl border hairline bg-ink-950 px-4 open:bg-gold-400/5 lg:rounded-none lg:border-x-0 lg:border-t-0 lg:bg-transparent lg:px-0 lg:open:bg-transparent">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 font-display text-xl text-cream transition-colors hover:text-gold-200 sm:text-2xl lg:gap-6 lg:py-6 [&::-webkit-details-marker]:hidden">
               {item.q}
-              <Plus className="size-4 shrink-0 text-gold-300 transition-transform duration-500 group-open:rotate-45" />
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full border hairline bg-gold-400/5 lg:size-4 lg:border-0 lg:bg-transparent">
+                <Plus className="size-4 text-gold-300 transition-transform duration-500 group-open:rotate-45" />
+              </span>
             </summary>
-            <p className="max-w-3xl pb-7 text-sm leading-relaxed text-mist">{item.a}</p>
+            <p className="max-w-3xl pb-5 text-sm leading-relaxed text-mist lg:pb-7">{item.a}</p>
           </details>
         ))}
       </Reveal>

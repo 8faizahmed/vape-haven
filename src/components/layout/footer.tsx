@@ -28,9 +28,9 @@ export async function Footer() {
 
   return (
     <footer className="relative mt-auto border-t hairline bg-ink-950 pb-[calc(var(--tabbar-h)+env(safe-area-inset-bottom))]">
-      <div className="mx-auto max-w-7xl px-5 pt-20 pb-10 lg:px-8">
-        <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
-          <div>
+      <div className="mx-auto max-w-7xl px-5 pt-12 pb-10 sm:pt-20 lg:px-8">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-14">
+          <div className="col-span-2 lg:col-span-1">
             <Logo />
             <p className="mt-6 max-w-xs text-sm leading-relaxed text-mist">
               A specialty vape boutique in {contact.address.city}, {contact.address.province}. Curated hardware and
@@ -69,7 +69,7 @@ export async function Footer() {
             <FooterLink href="/contact">Contact us</FooterLink>
           </FooterColumn>
 
-          <div>
+          <div className="col-span-2 lg:col-span-1">
             <h3 className="eyebrow">Visit</h3>
             <address className="mt-6 text-sm leading-relaxed text-mist not-italic">
               {contact.address.street}
@@ -91,7 +91,7 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 grid gap-10 border-t hairline pt-12 lg:grid-cols-2 lg:items-end">
+        <div className="mt-10 grid gap-6 border-t hairline pt-8 sm:mt-16 sm:gap-10 sm:pt-12 lg:grid-cols-2 lg:items-end">
           <div>
             <p className="font-display text-3xl">
               New arrivals, <em className="text-gold-gradient italic">first.</em>
@@ -101,7 +101,7 @@ export async function Footer() {
           <NewsletterForm />
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t hairline pt-8 text-xs leading-relaxed text-smoke lg:flex-row lg:justify-between">
+        <div className="mt-10 flex flex-col gap-4 border-t hairline pt-8 text-xs leading-relaxed text-smoke sm:mt-16 lg:flex-row lg:justify-between">
           <p>
             © <CopyrightYear /> {siteConfig.name}. Sale of vaping products is restricted to persons {siteConfig.legalAge}{" "}
             years of age or older in Ontario.
@@ -118,7 +118,7 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
   return (
     <div>
       <h3 className="eyebrow">{title}</h3>
-      <ul className="mt-6 grid gap-3">{children}</ul>
+      <ul className="mt-3 grid gap-1 lg:mt-6 lg:gap-3">{children}</ul>
     </div>
   );
 }
@@ -126,7 +126,7 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
-      <Link href={href} className="text-sm text-mist transition-colors hover:text-gold-200">
+      <Link href={href} className="inline-flex min-h-11 items-center text-sm text-mist transition-colors hover:text-gold-200 lg:min-h-0">
         {children}
       </Link>
     </li>

@@ -418,26 +418,68 @@ export default function VaporFluid({ className }: { className?: string }) {
 
     // Pointer → splats. The canvas ignores pointer events, so listen on window.
     const pointer = { x: 0, y: 0, dx: 0, dy: 0, moved: false, inside: false, lastMove: 0 };
-    const onMove = (e: PointerEvent) => {
+    let activeTouch: number | null = null;
+    const section = host.closest("section");
+    const resetPointer = () => {
+      activeTouch = null;
+      pointer.dx = pointer.dy = 0;
+      pointer.moved = pointer.inside = false;
+    };
+    const position = (e: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return null;
       const x = (e.clientX - rect.left) / rect.width;
       const y = 1 - (e.clientY - rect.top) / rect.height;
-      const inside = x >= 0 && x <= 1 && y >= 0 && y <= 1;
-      if (inside && pointer.inside) {
-        const a = rect.width / rect.height;
-        pointer.dx += (x - pointer.x) * (a < 1 ? a : 1);
-        pointer.dy += (y - pointer.y) / (a > 1 ? a : 1);
+      return { x, y, inside: x >= 0 && x <= 1 && y >= 0 && y <= 1, aspect: rect.width / rect.height };
+    };
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType === "mouse" || !e.isPrimary || activeTouch !== null) return;
+      if (!(e.target instanceof Element) || !section?.contains(e.target) || e.target.closest("a, button, input, select, textarea, [role='dialog']")) return;
+      const point = position(e);
+      if (!point?.inside) return;
+      // Each contact starts a new trail; never connect it to the previous finger.
+      resetPointer();
+      activeTouch = e.pointerId;
+      pointer.x = point.x;
+      pointer.y = point.y;
+      pointer.inside = pointer.moved = true;
+      pointer.dy = 0.025;
+      pointer.lastMove = performance.now();
+    };
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse" && e.pointerId !== activeTouch) return;
+      const point = position(e);
+      if (!point) return;
+      if (point.inside && pointer.inside) {
+        // Bound each movement so dropped frames or browser scrolling can't create a blast.
+        const clamp = (value: number) => Math.max(-0.06, Math.min(0.06, value));
+        pointer.dx = clamp(pointer.dx + (point.x - pointer.x) * Math.min(point.aspect, 1));
+        pointer.dy = clamp(pointer.dy + (point.y - pointer.y) / Math.max(point.aspect, 1));
         pointer.moved = true;
         pointer.lastMove = performance.now();
       }
-      pointer.x = x;
-      pointer.y = y;
-      pointer.inside = inside;
+      pointer.x = point.x;
+      pointer.y = point.y;
+      pointer.inside = point.inside;
     };
+    const onEnd = (e: PointerEvent) => {
+      if (e.pointerId === activeTouch) {
+        activeTouch = null;
+        pointer.inside = false;
+      }
+    };
+    // Passive listeners preserve native scrolling, links, and browser gestures.
+    window.addEventListener("pointerdown", onDown, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerup", onEnd, { passive: true });
+    window.addEventListener("pointercancel", onEnd, { passive: true });
+    window.addEventListener("blur", resetPointer);
 
     let visible = true;
-    const io = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (!visible) resetPointer();
+    });
     io.observe(canvas);
 
     let raf = 0;
@@ -489,7 +531,11 @@ export default function VaporFluid({ className }: { className?: string }) {
       cancelAnimationFrame(raf);
       ro.disconnect();
       io.disconnect();
+      window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onEnd);
+      window.removeEventListener("pointercancel", onEnd);
+      window.removeEventListener("blur", resetPointer);
       canvas.removeEventListener("webglcontextlost", onLost);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
       canvas.remove();

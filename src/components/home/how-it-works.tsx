@@ -28,7 +28,7 @@ export function HowItWorks() {
     <section className="relative isolate overflow-hidden">
       <Image src="/images/scenes/marble.webp" alt="" fill sizes="100vw" className="-z-10 object-cover opacity-40" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink-900 via-ink-900/70 to-ink-900" />
-      <div className="mx-auto max-w-7xl px-5 py-24 lg:px-8 lg:py-32">
+      <div className="mx-auto max-w-7xl px-5 py-16 sm:py-24 lg:px-8 lg:py-32">
         <Reveal>
           <SectionHeading
             align="center"
@@ -40,16 +40,16 @@ export function HowItWorks() {
             }
           />
         </Reveal>
-        <div className="mt-16 grid gap-px overflow-hidden border hairline bg-gold-400/15 md:grid-cols-3">
+        <div className="mt-8 grid gap-px overflow-hidden border hairline bg-gold-400/15 sm:mt-16 md:grid-cols-3">
           {steps.map((step, i) => (
             <Reveal key={step.title} delay={0.1 * i} className="bg-ink-900/95">
-              <GlowCard className="flex h-full flex-col items-center px-8 py-12 text-center">
-                <span className="flex size-16 items-center justify-center border border-gold-400/30 text-gold-300 transition-transform duration-700 ease-luxe group-hover/glow:rotate-45">
+              <GlowCard className="grid h-full grid-cols-[3rem_1fr] items-start gap-x-4 px-5 py-6 text-left md:flex md:flex-col md:items-center md:px-8 md:py-12 md:text-center">
+                <span className="row-span-3 flex size-12 items-center justify-center border border-gold-400/30 text-gold-300 transition-transform duration-700 ease-luxe group-hover/glow:rotate-45 md:size-16">
                   <step.icon className="size-6 transition-transform duration-700 ease-luxe group-hover/glow:-rotate-45" strokeWidth={1.25} />
                 </span>
-                <span className="mt-8 font-display text-sm text-gold-300 italic">Step {i + 1}</span>
-                <h3 className="mt-2 font-display text-3xl">{step.title}</h3>
-                <p className="mt-4 max-w-xs text-sm leading-relaxed text-mist">{step.body}</p>
+                <span className="font-display text-sm text-gold-300 italic md:mt-8">Step {i + 1}</span>
+                <h3 className="mt-1 font-display text-2xl md:mt-2 md:text-3xl">{step.title}</h3>
+                <p className="mt-2 max-w-xs text-sm leading-relaxed text-mist md:mt-4">{step.body}</p>
               </GlowCard>
             </Reveal>
           ))}

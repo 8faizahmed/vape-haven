@@ -2,7 +2,7 @@
 
 import { useMediaQuery } from "@/lib/use-media-query";
 
-/** True on mouse/trackpad devices without a reduced-motion preference. */
+/** Desktop hover effects stay off phone/tablet layouts, including with a paired mouse. */
 export function useFinePointer() {
-  return useMediaQuery("(pointer: fine) and (prefers-reduced-motion: no-preference)");
+  return useMediaQuery("(min-width: 64rem) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
 }

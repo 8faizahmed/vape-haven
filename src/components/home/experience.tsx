@@ -20,9 +20,9 @@ const pillars = [
 export function Experience() {
   return (
     <section className="relative overflow-hidden border-y hairline bg-ink-950">
-      <div className="mx-auto grid max-w-7xl items-center gap-16 px-5 py-24 lg:grid-cols-2 lg:gap-24 lg:px-8 lg:py-32">
+      <div className="mx-auto grid max-w-7xl items-center gap-8 px-5 py-16 sm:gap-16 sm:py-24 lg:grid-cols-2 lg:gap-24 lg:px-8 lg:py-32">
         <Reveal className="relative">
-          <div className="relative aspect-[4/5] overflow-hidden">
+          <div className="relative aspect-[16/11] overflow-hidden rounded-2xl sm:aspect-[4/3] lg:aspect-[4/5] lg:rounded-none">
             <Image
               src="/images/scenes/counter.webp"
               alt="Pod devices and e-liquid bottles on a black marble counter"
@@ -31,9 +31,9 @@ export function Experience() {
               className="object-cover"
             />
           </div>
-          <div className="absolute -right-3 -bottom-6 hidden border hairline bg-ink-900/90 px-8 py-6 backdrop-blur-md sm:block lg:-right-10">
-            <p className="font-display text-5xl text-gold-gradient">19+</p>
-            <p className="mt-1 text-[0.6rem] font-semibold tracking-[0.28em] text-mist uppercase">Adults-only boutique</p>
+          <div className="absolute right-3 bottom-3 rounded-xl border hairline bg-ink-900/90 px-4 py-3 backdrop-blur-md lg:-right-10 lg:-bottom-6 lg:rounded-none lg:px-8 lg:py-6">
+            <p className="font-display text-3xl text-gold-gradient lg:text-5xl">19+</p>
+            <p className="mt-1 text-[0.55rem] font-semibold tracking-[0.2em] text-mist uppercase lg:text-[0.6rem] lg:tracking-[0.28em]">Adults-only boutique</p>
           </div>
           <div aria-hidden className="absolute -top-4 -left-4 -z-10 hidden size-40 border border-gold-400/20 lg:block" />
         </Reveal>
@@ -45,11 +45,11 @@ export function Experience() {
               A boutique experience, <Accent>in store and online.</Accent>
             </h2>
           </Reveal>
-          <div className="mt-12 grid gap-10">
+          <div className="mt-7 grid gap-6 lg:mt-12 lg:gap-10">
             {pillars.map((p, i) => (
               <Reveal key={p.title} delay={0.1 * i}>
-                <div className="grid grid-cols-[auto_1fr] gap-6 border-t hairline pt-8">
-                  <span className="font-display text-2xl text-gold-300 italic">{String(i + 1).padStart(2, "0")}</span>
+                <div className="grid grid-cols-[auto_1fr] gap-4 border-t hairline pt-5 lg:gap-6 lg:pt-8">
+                  <span className="flex size-9 items-center justify-center rounded-full border hairline font-display text-lg text-gold-300 italic lg:block lg:size-auto lg:rounded-none lg:border-0 lg:text-2xl">{String(i + 1).padStart(2, "0")}</span>
                   <div>
                     <h3 className="font-display text-2xl">{p.title}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-mist">{p.body}</p>

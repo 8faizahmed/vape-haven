@@ -26,7 +26,7 @@ export function ContactForm() {
   }
 
   const field =
-    "w-full border hairline bg-ink-950/50 px-4 text-sm text-cream transition-colors focus:border-gold-300 focus:outline-none";
+    "w-full min-w-0 border hairline bg-ink-950/50 px-4 text-base text-cream transition-colors focus:border-gold-300 focus:outline-none lg:text-sm";
   const label = "text-[0.6rem] font-semibold tracking-[0.26em] text-smoke uppercase";
 
   return (

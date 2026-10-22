@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
+import { DESKTOP_QUERY, useMediaQuery } from "@/lib/use-media-query";
 
 export function Reveal({
   children,
@@ -12,13 +13,17 @@ export function Reveal({
   delay?: number;
   className?: string;
 }) {
+  const desktop = useMediaQuery(DESKTOP_QUERY);
+  const reducedMotion = useReducedMotion();
+  const visible = { opacity: 1, y: 0 };
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={reducedMotion ? false : { opacity: 0, y: desktop ? 28 : 14 }}
+      animate={reducedMotion ? visible : undefined}
+      whileInView={visible}
+      viewport={{ once: true, margin: desktop ? "-60px" : "-20px" }}
+      transition={{ duration: reducedMotion ? 0 : desktop ? 0.9 : 0.5, delay: reducedMotion ? 0 : desktop ? delay : Math.min(delay, 0.12), ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>

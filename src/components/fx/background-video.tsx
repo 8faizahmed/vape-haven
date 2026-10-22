@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Muted looping background video. Loads and plays only when near the viewport
- * (so hidden ones never download), and never for visitors who prefer reduced
- * motion — they get the poster frame.
+ * Muted looping background video. Plays only in the visible viewport and pauses
+ * in background tabs. Eager clips can buffer ahead; reduced-motion visitors get
+ * the poster without preloading video.
  */
 export function BackgroundVideo({
   src,
@@ -26,18 +26,33 @@ export function BackgroundVideo({
 
   useEffect(() => {
     const video = ref.current;
-    if (!video || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!video) return;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     video.muted = true;
+    let visible = false;
+    const syncPlayback = () => {
+      video.preload = eager && !reducedMotion.matches ? "auto" : "none";
+      if (visible && !document.hidden && !reducedMotion.matches) video.play().catch(() => {});
+      else video.pause();
+    };
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
+        visible = entry.isIntersecting;
+        syncPlayback();
       },
-      { rootMargin: "300px 0px" },
+      { threshold: 0.01 },
     );
     io.observe(video);
-    return () => io.disconnect();
-  }, []);
+    reducedMotion.addEventListener("change", syncPlayback);
+    document.addEventListener("visibilitychange", syncPlayback);
+    syncPlayback();
+    return () => {
+      io.disconnect();
+      reducedMotion.removeEventListener("change", syncPlayback);
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [eager]);
 
   return (
     <video
@@ -45,7 +60,7 @@ export function BackgroundVideo({
       muted
       loop
       playsInline
-      preload={eager ? "auto" : "none"}
+      preload="none"
       poster={poster}
       aria-hidden
       className={cn("object-cover", className)}

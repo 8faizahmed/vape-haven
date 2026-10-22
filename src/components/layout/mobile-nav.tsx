@@ -1,32 +1,45 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useDragControls, useReducedMotion, type PanInfo } from "motion/react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Logo } from "@/components/brand/logo";
 import { Portal } from "@/components/ui/portal";
 import { mainNav, siteConfig } from "@/config/site";
 import type { Category } from "@/lib/commerce/types";
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import { useUI } from "@/lib/ui-store";
+import { DESKTOP_QUERY, useMediaQuery } from "@/lib/use-media-query";
+import { useDialogFocus } from "@/lib/use-dialog-focus";
 
 export function MobileNav({ categories }: { categories: Pick<Category, "slug" | "name" | "image">[] }) {
   // Opened from the header (lg–xl) or the mobile tab bar.
   const open = useUI((s) => s.panel === "menu");
   const openPanel = useUI((s) => s.openPanel);
   const close = useUI((s) => s.closePanel);
+  const desktop = useMediaQuery(DESKTOP_QUERY);
+  const reducedMotion = useReducedMotion();
+  const drag = useDragControls();
+  const panel = useRef<HTMLDivElement>(null);
+  useDialogFocus(open, panel, close);
 
   useEffect(() => {
     if (!open) return;
     lockScroll();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    document.addEventListener("keydown", onKey);
+    const wide = matchMedia("(min-width: 1280px)");
+    const onResize = () => { if (wide.matches) close(); };
+    onResize();
+    wide.addEventListener("change", onResize);
     return () => {
       unlockScroll();
-      document.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onResize);
     };
   }, [open, close]);
+
+  const onDragEnd = (_: PointerEvent, info: PanInfo) => {
+    if (info.offset.y > 100 || (info.offset.y > 0 && info.velocity.y > 550)) close();
+  };
 
   return (
     <>
@@ -36,55 +49,83 @@ export function MobileNav({ categories }: { categories: Pick<Category, "slug" | 
       <Portal>
         <AnimatePresence>
           {open && (
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-label="Menu"
-              className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-ink-950 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] xl:hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-            >
-              <div className="flex h-14 items-center justify-between border-b hairline px-5 lg:h-20">
-                <Link href="/" onClick={close}>
-                  <Logo emblem={false} />
-                </Link>
-                <button type="button" onClick={close} aria-label="Close menu" className="-mr-2 flex size-11 items-center justify-center text-cream">
-                  <X className="size-5" />
-                </button>
-              </div>
-              <nav className="flex flex-col px-5 py-8">
-                {[{ label: "Home", href: "/" }, ...mainNav.filter((n) => !n.href.startsWith("/shop/"))].map((item, i) => (
-                  <motion.div
-                    key={item.href}
-                    initial={{ opacity: 0, x: -16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.05 * i + 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <Link href={item.href} onClick={close} className="block py-2 font-display text-4xl text-cream">
-                      {item.label}
+            <>
+              <motion.div
+                key="menu-backdrop"
+                aria-hidden="true"
+                className="fixed inset-0 z-[90] bg-ink-950/70 backdrop-blur-sm xl:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={close}
+              />
+              <motion.div
+                key="menu-panel"
+                ref={panel}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Menu"
+                tabIndex={-1}
+                className="fixed inset-x-0 bottom-0 z-[100] flex max-h-[calc(100dvh-max(1rem,env(safe-area-inset-top)))] flex-col overflow-hidden rounded-t-3xl border-t hairline bg-ink-950 pb-[env(safe-area-inset-bottom)] outline-none lg:inset-0 lg:max-h-none lg:rounded-none lg:border-0 lg:pt-[env(safe-area-inset-top)] xl:hidden"
+                initial={desktop ? { opacity: 0 } : { y: "100%" }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={desktop ? { opacity: 0 } : { y: "100%" }}
+                transition={{ duration: reducedMotion ? 0 : 0.35 }}
+                drag={desktop ? false : "y"}
+                dragListener={false}
+                dragControls={drag}
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={{ top: 0, bottom: 0.6 }}
+                onDragEnd={onDragEnd}
+              >
+                <div
+                  onPointerDown={(event) => { if (!desktop && !(event.target as HTMLElement).closest("a, button")) drag.start(event); }}
+                  className="shrink-0 touch-none border-b hairline"
+                >
+                  <div aria-hidden="true" className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-ink-500 lg:hidden" />
+                  <div className="flex h-14 items-center justify-between px-5 lg:h-20">
+                    <Link href="/" onClick={close}>
+                      <Logo emblem={false} />
                     </Link>
-                  </motion.div>
-                ))}
-              </nav>
-              <div className="border-t hairline px-5 py-8">
-                <p className="eyebrow">Shop by category</p>
-                <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3">
-                  {categories.map((c) => (
-                    <Link key={c.slug} href={`/shop/${c.slug}`} onClick={close} className="text-sm text-mist hover:text-gold-200">
-                      {c.name}
-                    </Link>
-                  ))}
+                    <button type="button" onClick={close} aria-label="Close menu" className="-mr-2 flex size-11 items-center justify-center text-cream">
+                      <X className="size-5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="mt-auto border-t hairline px-5 py-8 text-sm text-mist">
-                <p>{siteConfig.contact.phone}</p>
-                <p className="mt-1">
-                  {siteConfig.contact.address.city}, {siteConfig.contact.address.province} · Adults {siteConfig.legalAge}+
-                </p>
-              </div>
-            </motion.div>
+                <div data-lenis-prevent className="min-h-0 overflow-y-auto overscroll-contain lg:flex lg:flex-1 lg:flex-col">
+                  <nav aria-label="Main navigation" className="flex flex-col px-5 py-4 lg:py-8">
+                    {[{ label: "Home", href: "/" }, ...mainNav.filter((n) => !n.href.startsWith("/shop/"))].map((item, i) => (
+                      <motion.div
+                        key={item.href}
+                        initial={reducedMotion ? false : { opacity: 0, x: -16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: reducedMotion ? 0 : 0.05 * i + 0.1, duration: reducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <Link href={item.href} onClick={close} className="block py-2 font-display text-3xl text-cream lg:text-4xl">
+                          {item.label}
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </nav>
+                  <div className="border-t hairline px-5 py-5 lg:py-8">
+                    <p className="eyebrow">Shop by category</p>
+                    <div className="mt-3 grid grid-cols-2 gap-x-4 lg:mt-5 lg:gap-y-3">
+                      {categories.map((c) => (
+                        <Link key={c.slug} href={`/shop/${c.slug}`} onClick={close} className="flex min-h-11 items-center text-sm text-mist hover:text-gold-200 lg:min-h-0">
+                          {c.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-t hairline px-5 py-5 text-sm text-mist lg:mt-auto lg:py-8">
+                    <p>{siteConfig.contact.phone}</p>
+                    <p className="mt-1">
+                      {siteConfig.contact.address.city}, {siteConfig.contact.address.province} · Adults {siteConfig.legalAge}+
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </Portal>

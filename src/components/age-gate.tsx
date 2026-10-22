@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Emblem } from "@/components/brand/logo";
 import { BackgroundVideo } from "@/components/fx/background-video";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { AGE_COOKIE, AGE_VERIFIED_EVENT } from "@/lib/age-gate";
 import { cn } from "@/lib/utils";
+import { useDialogFocus } from "@/lib/use-dialog-focus";
 
 const listeners = new Set<() => void>();
 const verifiedStore = {
@@ -47,16 +48,9 @@ export function AgeGate() {
   const [remember, setRemember] = useState(true);
   const dayRef = useRef<HTMLInputElement>(null);
   const yearRef = useRef<HTMLInputElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
 
-  // Keep keyboard and screen-reader focus inside the gate while it's open.
-  useEffect(() => {
-    const site = document.getElementById("site");
-    if (!site || verified) return;
-    site.inert = true;
-    return () => {
-      site.inert = false;
-    };
-  }, [verified]);
+  useDialogFocus(!verified, dialog);
 
   if (verified) return null;
 
@@ -97,11 +91,13 @@ export function AgeGate() {
 
   return (
     <div
+      ref={dialog}
       data-age-gate
       role="dialog"
       aria-modal="true"
       aria-labelledby="age-gate-title"
-      className={cn("fixed inset-0 z-[150]", leaving && "pointer-events-none")}
+      tabIndex={-1}
+      className={cn("fixed inset-0 z-[150] outline-none", leaving && "pointer-events-none")}
     >
       <div className={cn(curtain, "top-0", leaving && "-translate-y-full delay-[550ms]")} />
       <div className={cn(curtain, "bottom-0", leaving && "translate-y-full delay-[550ms]")} />
@@ -131,15 +127,15 @@ export function AgeGate() {
         }}
       />
 
-      <div className="relative flex h-full items-center justify-center overflow-y-auto p-4">
+      <div data-lenis-prevent className="relative flex h-full items-start justify-center overflow-y-auto overscroll-contain px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div
           className={cn(
-            "relative w-full max-w-md border hairline bg-ink-900/85 px-7 py-12 text-center shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] transition-all duration-500 ease-luxe sm:px-12",
+            "relative my-auto w-full max-w-md shrink-0 border hairline bg-ink-900/85 px-6 py-6 text-center shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] transition-all duration-500 ease-luxe sm:px-12 sm:py-12",
             leaving && "scale-95 opacity-0 blur-sm",
           )}
         >
           <Corners />
-          <Emblem className="emblem-draw mx-auto size-16" />
+          <Emblem className="emblem-draw mx-auto size-12 sm:size-16" />
 
           {status === "underage" ? (
             <div className="mt-8">
@@ -160,30 +156,29 @@ export function AgeGate() {
             </div>
           ) : (
             <>
-              <p className="eyebrow animate-fade-up mt-8 [animation-delay:500ms]">
+              <p className="eyebrow animate-fade-up mt-4 [animation-delay:500ms] sm:mt-8">
                 Adults only · {siteConfig.legalAge}+
               </p>
               <h2
                 id="age-gate-title"
-                className="animate-fade-up mt-4 font-display text-4xl leading-[1.05] [animation-delay:620ms] sm:text-[2.75rem]"
+                className="animate-fade-up mt-3 font-display text-4xl leading-[1.05] [animation-delay:620ms] sm:mt-4 sm:text-[2.75rem]"
               >
                 Welcome to
                 <br />
                 <em className="text-gold-gradient animate-shimmer italic">Vape Haven</em>
               </h2>
-              <p className="animate-fade-up mt-4 text-sm leading-relaxed text-mist [animation-delay:740ms]">
+              <p className="animate-fade-up mt-3 text-sm leading-relaxed text-mist [animation-delay:740ms] sm:mt-4">
                 This site sells nicotine products. Please enter your date of birth to confirm you are{" "}
                 {siteConfig.legalAge} or older.
               </p>
 
-              <form onSubmit={submit} noValidate className="animate-fade-up mt-8 [animation-delay:860ms]">
+              <form onSubmit={submit} noValidate className="animate-fade-up mt-5 [animation-delay:860ms] sm:mt-8">
                 <fieldset>
                   <legend className="sr-only">Date of birth</legend>
                   <div className="grid grid-cols-[1fr_1fr_1.5fr] gap-3">
                     <label className="flex flex-col gap-2">
                       <span className="text-[0.6rem] font-semibold tracking-[0.28em] text-smoke uppercase">Month</span>
                       <input
-                        autoFocus
                         inputMode="numeric"
                         autoComplete="bday-month"
                         placeholder="MM"
@@ -223,22 +218,22 @@ export function AgeGate() {
                   {error}
                 </p>
 
-                <label className="mt-2 flex cursor-pointer items-center justify-center gap-3 text-xs text-mist">
+                <label className="mt-2 flex min-h-11 cursor-pointer items-center justify-center gap-3 text-left text-xs text-mist sm:min-h-0 sm:text-center">
                   <input
                     type="checkbox"
                     checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
-                    className="size-4 accent-gold-400"
+                    className="size-5 shrink-0 accent-gold-400 sm:size-4"
                   />
                   Remember me on this device for {siteConfig.ageGateRememberDays} days
                 </label>
 
-                <Button type="submit" size="lg" className="mt-8 w-full">
+                <Button type="submit" size="lg" className="mt-4 w-full sm:mt-8">
                   Enter site
                 </Button>
               </form>
 
-              <p className="animate-fade-up mt-8 text-[0.7rem] leading-relaxed text-smoke [animation-delay:980ms]">
+              <p className="animate-fade-up mt-4 text-[0.7rem] leading-relaxed text-smoke [animation-delay:980ms] sm:mt-8">
                 Valid government-issued photo ID is required for every pickup and delivery.
               </p>
             </>
