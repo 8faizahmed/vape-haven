@@ -91,7 +91,7 @@ export function SearchDialog({
         {open && (
           <>
             <motion.div
-              className="fixed inset-0 z-[90] bg-ink-950/75 backdrop-blur-sm"
+              className="safe-area-backdrop fixed inset-0 z-[90] bg-ink-950/75 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

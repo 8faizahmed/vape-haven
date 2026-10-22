@@ -94,7 +94,7 @@ export function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={submit} className="grid gap-12 lg:grid-cols-[1fr_400px] lg:gap-16">
+    <form id="checkout-form" onSubmit={submit} className="grid gap-12 lg:grid-cols-[1fr_400px] lg:gap-16">
       <div className="grid gap-12">
         <Step number={1} title="Your details" description="Use the name on your government-issued photo ID.">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -215,7 +215,7 @@ export function CheckoutForm() {
             <p className="text-[0.6rem] font-semibold tracking-[0.24em] text-smoke uppercase">Total</p>
             <p className="font-display text-2xl leading-tight text-gold-100 tabular-nums">{formatPrice(totals.total)}</p>
           </div>
-          <Button type="submit" disabled={submitting}>
+          <Button type="submit" form="checkout-form" disabled={submitting}>
             {submitting ? <LoaderCircle className="size-4 animate-spin" /> : siteConfig.demoMode ? "Place order" : "Pay now"}
           </Button>
         </div>

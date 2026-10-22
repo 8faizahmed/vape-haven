@@ -44,7 +44,9 @@ export function HeaderShell({ children }: { children: ReactNode }) {
   return (
     <header
       className={cn(
-        "sticky top-[var(--safe-area-top)] z-40 border-b hairline bg-ink-900/80 backdrop-blur-xl transition-transform duration-500 ease-luxe",
+        // Solid on phones: iOS Safari tints the status bar from the element touching the top
+        // of the screen, and a translucent header lets scrolled content show through there.
+        "sticky top-[var(--safe-area-top)] z-40 border-b hairline bg-ink-900 transition-[translate,filter] duration-500 ease-luxe lg:bg-ink-900/80 lg:backdrop-blur-xl",
         hidden && "-translate-y-full lg:translate-y-0",
       )}
     >

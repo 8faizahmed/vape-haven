@@ -105,7 +105,6 @@
   /* Browser tabs use the top header; only installed apps reserve a bottom bar. */
   :root {
     --safe-area-top: env(safe-area-inset-top, 0px);
-    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
     --tabbar-h: 0px;
     --tabbar-space: 0px;
     --floating-menu-space: 0px;
@@ -123,6 +122,8 @@
     }
   }
   html {
+    /* Safari 26 falls back to the root background for its status bar and toolbar tint. */
+    background-color: var(--color-ink-900);
     scroll-padding-bottom: calc(max(var(--tabbar-space), var(--floating-menu-space)) + 1rem);
     color-scheme: dark;
     scroll-behavior: smooth;
@@ -165,7 +166,9 @@
   }
 }
 
-/* Cover the status-bar area even when the header scrolls or slides away. */
+/* Installed app (black-translucent status bar): keep a solid strip behind the
+   status bar so it matches the solid header, even while the header slides away.
+   In Safari the inset is 0 and the status bar takes its colour from the header. */
 #site {
   padding-top: var(--safe-area-top);
 }
@@ -176,20 +179,30 @@
   height: var(--safe-area-top);
   z-index: 60;
   pointer-events: none;
-  background: rgb(10 10 10 / 80%);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  background: var(--color-ink-900);
 }
 
-/* Modal blur covers the status bar and home-indicator regions as well. */
-.safe-area-backdrop {
-  top: calc(0px - var(--safe-area-top));
-  bottom: calc(0px - var(--safe-area-bottom));
-}
+/* iOS 26 Safari draws the page under the status bar / Dynamic Island and its
+   floating search bar, and no fixed overlay can paint there. So on phones the
+   overlay is just a click-catcher, and the page itself is blurred and dimmed
+   while a menu, sheet or search is open — the edges then match the middle.
+   .page-layer marks fixed UI rendered outside #site (e.g. the sticky buy bar). */
 @media (width < 64rem) {
   .safe-area-backdrop {
-    -webkit-backdrop-filter: blur(24px);
-    backdrop-filter: blur(24px);
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@layer base {
+  @media (width < 64rem) {
+    #site > *,
+    .page-layer {
+      transition: filter 0.45s var(--ease-luxe);
+    }
+    html[data-overlay] :is(#site > *, .page-layer) {
+      filter: blur(14px) brightness(0.4);
+    }
   }
 }
 
@@ -204,6 +217,12 @@
 @media (width < 64rem) {
   .browser-menu-fab {
     display: flex;
+    /* Rise above the sticky buy/checkout bar while it's showing (--action-bar-h). */
+    translate: 0 calc(-1 * var(--action-bar-h, 0px));
+    transition:
+      translate 0.35s var(--ease-luxe),
+      filter 0.45s var(--ease-luxe),
+      background-color 0.15s;
   }
 }
 @media (display-mode: standalone) and (width < 64rem) {
