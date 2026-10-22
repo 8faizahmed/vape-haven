@@ -122,6 +122,11 @@ Background videos are generated with Veo 3.1 (`scripts/generate-videos.mjs`) —
 start from the matching still image. Each 8-second clip becomes a seamless 16-second forward/reverse loop with audio
 stripped, encoded as desktop (1280px) and mobile (854px) MP4s plus a poster frame in `public/videos/`.
 
+The hero clip is the exception: Veo returned 720p, so it was upscaled 2x (to 2560×1440) frame by frame with
+[Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) (`realesr-animevideov3-x2`, ncnn-vulkan build) and saved as
+`assets/originals/videos/hero-boutique-upscaled.mp4`. The script encodes from any `<name>-upscaled.mp4` master it
+finds, so the hero ships at 1920px desktop / 960px mobile.
+
 ```bash
 npm run videos                    # generate anything missing
 npm run videos -- --force         # re-encode from saved originals (free)
