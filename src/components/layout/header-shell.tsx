@@ -44,9 +44,9 @@ export function HeaderShell({ children }: { children: ReactNode }) {
   return (
     <header
       className={cn(
-        // Solid on phones so it reads as one bar with the band above it (.site-header in
-        // globals.css) that fills iOS Safari's status-bar strip once the header sticks.
-        "site-header sticky top-[var(--safe-area-top)] z-40 border-b hairline bg-ink-900 transition-[translate,filter] duration-500 ease-luxe lg:bg-ink-900/80 lg:backdrop-blur-xl",
+        // One flat colour on phones: once it sticks, iOS Safari fills the status-bar strip
+        // with this background. Translucency, blur or texture layers break that.
+        "sticky top-[var(--safe-area-top)] z-40 border-b hairline bg-ink-900 transition-[translate,filter] duration-500 ease-luxe lg:bg-ink-900/80 lg:backdrop-blur-xl",
         hidden && "-translate-y-full lg:translate-y-0",
       )}
     >
